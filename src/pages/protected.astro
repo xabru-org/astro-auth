@@ -1,0 +1,55 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import { firebase } from '@/firebase/config';
+
+const { user, isLoggedIn } = Astro.locals;
+if (!isLoggedIn || !user) return Astro.redirect('/login');
+
+const { name, email, avatar } = user;
+
+const firebaseUser = firebase.auth.currentUser;
+await firebaseUser?.reload();
+const { emailVerified } = firebaseUser!;
+---
+
+<MainLayout>
+  <div
+    class='flex flex-row items-center justify-center w-full h-[600px] rounded-xl font-sans bg-gray-200'>
+    <div class='mx-auto bg-white shadow-xl card w-96 hover:shadow rounded-xl'>
+      {
+        avatar ? (
+          <img
+            class='w-32 mx-auto -mt-20 border-8 border-white rounded-full'
+            src={avatar}
+            alt={`Avatar de ${name}`}
+          />
+        ) : (
+          <div class='flex items-center justify-center w-32 h-32 mx-auto -mt-20 bg-gray-300 border-8 border-white rounded-full'>
+            <span class='text-3xl font-extrabold text-white'>
+              {name!.substring(0, 2)}
+            </span>
+          </div>
+        )
+      }
+
+      <div class='mt-2 text-3xl font-medium text-center'>{name}</div>
+      <div class='mt-2 text-sm font-light text-center'>{email}</div>
+      <div class='text-lg font-normal text-center'>
+        {emailVerified ? 'Email Verified' : 'No Email Verified'}
+      </div>
+      <div class='px-6 mt-2 text-sm font-light text-center'>
+        <p>Front end Developer, avid reader. Love to take a long walk, swim</p>
+      </div>
+      <hr class='mt-8' />
+      <div class='flex p-4'>
+        <div class='w-1/2 text-center'>
+          <span class='font-bold'>1.8 k</span> Followers
+        </div>
+        <div class='w-0 border border-gray-300'></div>
+        <div class='w-1/2 text-center'>
+          <span class='font-bold'>2.0 k</span> Following
+        </div>
+      </div>
+    </div>
+  </div>
+</MainLayout>
